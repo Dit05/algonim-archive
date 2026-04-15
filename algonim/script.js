@@ -209,6 +209,172 @@ const examples = {
   await seq.capture()
 },
 
+'mélységi keresés': async function(seq) {
+  seq.config.resolution = { width: 800, height: 500 }
+  seq.config.defaultDelayMs = 1200
+
+  const code = new Algonim.Models.Code()
+  code.textStyle.font = '10pt sans'
+  code.textHeightFactor = 0.9
+  code.setLines([
+    'Mélységi keresés (k, V)',
+    '',
+    'Startcsúcs := k',
+    'M (Startcsúcs) := 0',
+    'Sz (Startcsúcs) := nincs',
+    'Nyílt := {Startcsúcs}',
+    'Zárt := {}',
+    '',
+    'While Nyílt nem üres do',
+    '\tLegyen C eleme Nyílt uh. M(C) =\n  Max{M(D)| D eleme Nyílt}',
+    '',
+    '\tif C eleme V then return C',
+    '',
+    '\tfor C minden D gyermekére do',
+    '\t\tif D nem eleme Nyílt és D nem eleme Zárt then',
+    '',
+    '\t\t\tM(D) := M(C) + 1',
+    '\t\t\tSz(D) := C',
+    '\t\t\tNyílt := Nyílt ⋃ {D}',
+    '',
+    '\t\tfi',
+    '\tod',
+    '',
+    '\tNyílt := Nyílt ∖ {C}',
+    '\tZárt := Zárt ⋃ {C}',
+    '',
+    'od',
+    'return "Nincs megoldás"'
+  ])
+
+  const graph = new Algonim.Models.Graph()
+  const nodes = graph.setLayout({
+    '1': { pos: [200, 50], value: 0, connect: ['2'] },
+    '2': { pos: [150, 150], value: 1, connect: ['5', '4', '3'] },
+    '3': { pos: [250, 150], value: 2, connect: ['1'] },
+    '4': { pos: [100, 250], value: 2, connect: ['6'] },
+    '5': { pos: [200, 250], value: 2, connect: ['6'] },
+    '6': { pos: [150, 350], value: 3, connect: ['7'] },
+    '7': { pos: [150, 450], value: 4, connect: [] },
+  })
+  for(const key in nodes) {
+    nodes[key].hideValue = true
+  }
+
+  const borders = {}
+  borders.unvisited = new Algonim.EllipseBorder()
+  borders.unvisited.forceAspectRatio = 1
+  borders.open = new Algonim.EllipseBorder()
+  borders.open.forceAspectRatio = 1
+  borders.open.fill = 'red'
+  borders.closed = new Algonim.EllipseBorder()
+  borders.closed.forceAspectRatio = 1
+  borders.closed.fill = 'gray'
+  borders.actual = new Algonim.EllipseBorder()
+  borders.actual.forceAspectRatio = 1
+  borders.actual.fill = borders.open.fill
+  borders.actual.line = { stroke: 'blue', lineWidth: 4 }
+
+  const overlay = new Algonim.Models.Overlay(graph)
+  overlay.drawAfter = (drawer) => {
+    drawer.drawText('Terminális csúcs', {x: 180, y: 450}, {align: 'left'})
+  }
+
+  seq.setLayout({
+    'split': 'vertical',
+    'ratio': 0.5,
+    'left': overlay,
+    'right': code
+  })
+
+  function setBorders() {
+    for(const key in nodes) {
+      const node = nodes[key]
+      if(node == actual) {
+        node.border = borders.actual
+      } else if(closed.has(node)) {
+        node.border = borders.closed
+      } else if(open.includes(node)) {
+        node.border = borders.open
+      } else {
+        node.border = borders.unvisited
+      }
+    }
+  }
+  const open = []
+  const closed = new Set()
+  let actual = undefined
+  setBorders()
+
+  code.arrowLines = 2
+  await seq.capture()
+
+  code.arrowLines = 3
+  await seq.capture()
+  nodes['1'].hideValue = false
+  await seq.capture()
+
+  code.arrowLines = 4
+  await seq.capture()
+
+  code.arrowLines = 5
+  await seq.capture()
+  open.push(nodes['1'])
+  setBorders()
+  await seq.capture()
+
+  while(open.length > 0) {
+    code.arrowLines = 9
+    await seq.capture()
+
+    const top = open.pop()
+    actual = top
+    setBorders()
+    await seq.capture()
+
+    code.arrowLines = 11
+    await seq.capture()
+    if(top == nodes['7']) {
+      code.createSign(11).text = 'Vége.'
+      await seq.capture(3)
+      return
+    }
+
+    code.arrowLines = 13
+    await seq.capture()
+    for(const child of top.connections) {
+      code.arrowLines = 14
+      await seq.capture()
+
+      if(!open.includes(child) && !closed.has(child)) {
+        code.arrowLines = 16
+        await seq.capture()
+        child.hideValue = false
+
+        code.arrowLines = 17
+        await seq.capture()
+
+        code.arrowLines = 18
+        await seq.capture()
+        open.push(child)
+        setBorders()
+      }
+
+      code.arrowLines = 20
+      await seq.capture()
+    }
+
+    code.arrowLines = 23
+    await seq.capture()
+    code.arrowLines = 24
+    await seq.capture()
+    closed.add(top)
+    actual = undefined
+    setBorders()
+    await seq.capture()
+  }
+},
+
 rainbow: async function(seq) {
   // Generates a single frame with lots of colors for quantization to deal with.
   seq.config.resolution = { width: 512, height: 256 }

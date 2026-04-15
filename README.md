@@ -4,7 +4,7 @@ This is an algorithm visualizer that runs in the browser and can make animated G
 
 It also supports embedding the animation's code directly in the resulting GIF via the use of a custom `Algonim.` [Application Extension block](https://www.w3.org/Graphics/GIF/spec-gif89a.txt).
 
-![Example animation (with embedded code!)](example.gif)
+![Example animation (with embedded code!)](depthfirst.gif)
 
 ## Building
 

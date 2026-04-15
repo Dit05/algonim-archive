@@ -1,3 +1,6 @@
+> [!NOTE]
+> This is a snapshot of the actual repository ([Dit05/algonim](https://github.com/Dit05/algonim)) at the time of my thesis submission.
+
 # Algonim
 
 This is an algorithm visualizer that runs in the browser and can make animated GIFs.
@@ -16,4 +19,4 @@ You can run tests with `npm run test`.
 
 To experience Algonim after you've built it locally, simply open `test.html` in a web browser.
 
-New commits on `main` are also automatically built and deployed to the repository's [GitHub Page](https://dit05.github.io/algonim/). You may also find the auto-generated documentation there.
+New commits on `main` are also automatically built and deployed to the repository's [GitHub Page](https://dit05.github.io/algonim-archive/). You may also find the auto-generated documentation there.
